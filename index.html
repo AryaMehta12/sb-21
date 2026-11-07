@@ -300,6 +300,8 @@ div.media{cursor:default}
 dialog{border:0;border-radius:10px;padding:0;width:min(560px,92vw);background:var(--paper);color:var(--print-ink)}
 dialog::backdrop{background:rgba(20,12,16,.72)}
 .dlg-media iframe,.dlg-media video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+#vid.vertical{width:min(380px,90vw)}
+#vid.vertical .dlg-media{aspect-ratio:9/16;max-height:82vh}
 .dlg-media{position:relative;aspect-ratio:16/10;display:grid;place-items:center;color:#fff;text-align:center;padding:20px;background:linear-gradient(150deg,var(--g1,#6d4a5c),var(--g2,#c78b6e))}
 .dlg-body{padding:22px}
 .dlg-body h3{font:400 1.5rem var(--display);margin:0 0 8px}
@@ -484,8 +486,15 @@ const chapters = [
   { id:"jee", title:"The High School JEEvan", ages:"16 to 18", m:"lofi", blurb:"HC Verma, coaching buses, and surviving it all.",
     egg:{pos:"right:9%;top:26%", title:"To the girl who survived JEE", text:"A note from Arya goes here."},
     cards:[
-      {name:"The coaching gang", rel:"Same batch", kind:"video", dur:"1:22", develop:true, g:["#8FA3B8","#E9CF2E"],
-       cap:"The canteen-bill lectures"}
+      {name:"Abhinav", rel:"TYP warrior", kind:"video", yt:"CudUNquS8VE", develop:true, g:["#8FA3B8","#E9CF2E"]},
+      {name:"Arya", rel:"TYP warrior ++", kind:"video", yt:"Rosgh6Aeq1Y", g:["#8FA3B8","#E9CF2E"]},
+      {name:"Ron", rel:"TYP warrior", kind:"video", yt:"z3Usk3kcb6I", vertical:true, g:["#8FA3B8","#E9CF2E"]},
+      {name:"Aleena", rel:"Neev gang", kind:"video", yt:"Q3uWJVhYAwE", g:["#A9B6C4","#F1E27A"]},
+      {name:"Amy", rel:"Neev gang", kind:"video", yt:"ZsLV0lBcP5A", g:["#A9B6C4","#F1E27A"]},
+      {name:"Tanya", rel:"Neev gang", kind:"video", yt:"U-8vatEuzeo", g:["#A9B6C4","#F1E27A"]},
+      {name:"Sanjana", rel:"S2C gang", kind:"video", yt:"hp7hTf0OfdE", g:["#7F95AC","#D9C35A"]},
+      {name:"Ujesha", rel:"S2C gang", kind:"video", yt:"Wkr4Nz2uANs", g:["#7F95AC","#D9C35A"]},
+      {name:"Lekshika", rel:"S2C gang", kind:"video", yt:"8gre0Ldv8R4", vertical:true, g:["#7F95AC","#D9C35A"]}
     ]},
   { id:"iitb", title:"College", ages:"18 to 21", m:"ambient", blurb:"A new city, new people, the same Shreya.",
     egg:{pos:"left:10%;top:24%", title:"Our first photo together", text:"A photo of you two, and Arya's note on it, goes here."},
@@ -551,7 +560,7 @@ function card(c){
     : `<div class="media ${c.develop?"develop":""}" style="${bgStyle(c.g,c.img)}" role="img" aria-label="Photo from ${c.name}">${inner}</div>`;
   return `<article class="card-wrap">
     <div class="print">${media}<div class="lip">${c.name}</div></div>
-    <div class="meta"><div class="rel">${c.rel}</div><p class="cap">${c.cap}</p>${c.good ? `<p class="good">${c.good}</p>` : ""}
+    <div class="meta"><div class="rel">${c.rel}</div>${c.cap ? `<p class="cap">${c.cap}</p>` : ""}${c.good ? `<p class="good">${c.good}</p>` : ""}
       ${c.oops ? `<div class="oops"><button aria-expanded="false" aria-controls="${id}">And the one she'd rather forget</button><p id="${id}" hidden>${c.oops}</p></div>` : ""}
     </div></article>`;
 }
@@ -696,6 +705,7 @@ document.addEventListener("click", e => {
   if (c.yt) fr.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${c.yt}?autoplay=1&rel=0" title="${c.name}'s video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   else if (c.video) fr.innerHTML = `<video src="${c.video}" controls autoplay playsinline></video>`;
   else fr.innerHTML = `<p>${c.name}'s video plays here.</p>`;
+  vid.classList.toggle("vertical", !!c.vertical);
   ducked = true; applyVolume(); vid.showModal();
 });
 vid.addEventListener("close", () => { fr.innerHTML = ""; ducked = false; applyVolume(); });
