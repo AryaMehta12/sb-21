@@ -486,16 +486,16 @@ const chapters = [
   { id:"jee", title:"The High School JEEvan", ages:"16 to 18", m:"lofi", blurb:"HC Verma, coaching buses, and surviving it all.",
     egg:{pos:"right:9%;top:26%", title:"To the girl who survived JEE", text:"A note from Arya goes here."},
     cards:[
-      {name:"Abhinav", rel:"TYP warrior", kind:"video", yt:"CudUNquS8VE", develop:true, g:["#8FA3B8","#E9CF2E"]},
-      {name:"Arya", rel:"TYP warrior ++", kind:"video", yt:"PD-t3ocdSeM", g:["#8FA3B8","#E9CF2E"]},
-      {name:"Ron", rel:"TYP warrior", kind:"video", yt:"z3Usk3kcb6I", vertical:true, g:["#8FA3B8","#E9CF2E"]},
-      {name:"Aleena", rel:"Neev gang", kind:"video", yt:"Q3uWJVhYAwE", g:["#A9B6C4","#F1E27A"]},
-      {name:"Amy", rel:"Neev gang", kind:"video", yt:"ZsLV0lBcP5A", g:["#A9B6C4","#F1E27A"]},
-      {name:"Tanya", rel:"Neev gang", kind:"video", yt:"U-8vatEuzeo", g:["#A9B6C4","#F1E27A"]},
-      {name:"Sanjana", rel:"S2C gang", kind:"video", yt:"hp7hTf0OfdE", g:["#7F95AC","#D9C35A"]},
-      {name:"Ujesha", rel:"S2C gang", kind:"video", yt:"Wkr4Nz2uANs", g:["#7F95AC","#D9C35A"]},
-      {name:"Lekshika", rel:"S2C gang", kind:"video", yt:"8gre0Ldv8R4", vertical:true, g:["#7F95AC","#D9C35A"]},
-      {name:"Ayush", rel:"Bus gang", kind:"video", yt:"dlb_2ULQ51s", vertical:true, g:["#93A7A0","#E3D27A"]}
+      {name:"Abhinav", kind:"video", yt:"CudUNquS8VE", develop:true, g:["#8FA3B8","#E9CF2E"]},
+      {name:"Arya", kind:"video", yt:"PD-t3ocdSeM", g:["#8FA3B8","#E9CF2E"]},
+      {name:"Ron", kind:"video", yt:"z3Usk3kcb6I", vertical:true, g:["#8FA3B8","#E9CF2E"]},
+      {name:"Aleena", kind:"video", yt:"Q3uWJVhYAwE", g:["#A9B6C4","#F1E27A"]},
+      {name:"Amy", kind:"video", yt:"ZsLV0lBcP5A", g:["#A9B6C4","#F1E27A"]},
+      {name:"Tanya", kind:"video", yt:"U-8vatEuzeo", g:["#A9B6C4","#F1E27A"]},
+      {name:"Sanjana", kind:"video", yt:"hp7hTf0OfdE", g:["#7F95AC","#D9C35A"]},
+      {name:"Ujesha", kind:"video", yt:"Wkr4Nz2uANs", g:["#7F95AC","#D9C35A"]},
+      {name:"Lekshika", kind:"video", yt:"8gre0Ldv8R4", vertical:true, g:["#7F95AC","#D9C35A"]},
+      {name:"Ayush", kind:"video", yt:"dlb_2ULQ51s", vertical:true, g:["#93A7A0","#E3D27A"]}
     ]},
   { id:"iitb", title:"College", ages:"18 to 21", m:"ambient", blurb:"A new city, new people, the same Shreya.",
     egg:{pos:"left:10%;top:24%", title:"Our first photo together", text:"A photo of you two, and Arya's note on it, goes here."},
@@ -564,7 +564,7 @@ function card(c){
     : `<div class="media ${c.develop?"develop":""}" style="${bgStyle(c.g,thumbOf(c),thumbSize(c))}" role="img" aria-label="Photo from ${c.name}">${inner}</div>`;
   return `<article class="card-wrap">
     <div class="print">${media}<div class="lip">${c.name}</div></div>
-    <div class="meta"><div class="rel">${c.rel}</div>${c.cap ? `<p class="cap">${c.cap}</p>` : ""}${c.good ? `<p class="good">${c.good}</p>` : ""}
+    <div class="meta">${c.rel ? `<div class="rel">${c.rel}</div>` : ""}${c.cap ? `<p class="cap">${c.cap}</p>` : ""}${c.good ? `<p class="good">${c.good}</p>` : ""}
       ${c.oops ? `<div class="oops"><button aria-expanded="false" aria-controls="${id}">And the one she'd rather forget</button><p id="${id}" hidden>${c.oops}</p></div>` : ""}
     </div></article>`;
 }
