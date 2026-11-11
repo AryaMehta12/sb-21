@@ -262,8 +262,13 @@ div.media{cursor:default}
 /* ---------- cold open ---------- */
 #cold{position:fixed;inset:0;z-index:55;background:#1B1218;display:grid;place-items:center;opacity:0;visibility:hidden;transition:opacity 1.2s ease,visibility 1.2s}
 #cold.show{opacity:1;visibility:visible}
-#cold img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.9}
-#cold #coldBg{object-fit:cover;filter:blur(28px) brightness(.55);transform:scale(1.15);opacity:1}
+.scene-c{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity 2s ease}
+.scene-c.on{opacity:1}
+#cold img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.92}
+#cold .cbg{object-fit:cover;filter:blur(28px) brightness(.55);transform:scale(1.15);opacity:1}
+#cold.show .scene-c .cimg{animation:push 9s ease-out forwards}
+@keyframes push{from{transform:scale(1)}to{transform:scale(1.06)}}
+#cold .cold-text span{display:block;margin-top:58vh}
 #cold .cold-text{position:relative;text-align:center;color:#FBEFE2;text-shadow:0 2px 18px rgba(0,0,0,.55);padding:24px}
 #cold .cold-text b{display:block;font:400 clamp(2.6rem,9vw,4.4rem)/1 var(--display)}
 #cold .cold-text span{font:clamp(1.3rem,4vw,1.7rem) var(--hand)}
@@ -359,7 +364,7 @@ dialog::backdrop{background:rgba(20,12,16,.72)}
 </div>
 <div id="flash" aria-hidden="true"></div>
 
-<div id="cold" aria-hidden="true"><img id="coldBg" alt=""><img id="coldImg" alt=""><div class="cold-text"><b>Shreya</b><span id="coldText"></span></div></div>
+<div id="cold" aria-hidden="true"><div class="scene-c on" id="sceneA"><img class="cbg" alt=""><img class="cimg" alt=""><div class="cold-text"><b>Shreya</b></div></div><div class="scene-c" id="sceneB"><img class="cbg" alt=""><img class="cimg" alt=""><div class="cold-text"><span id="coldText"></span></div></div></div>
 <div class="lifebar" id="lifebar" aria-hidden="true"><div class="segs" id="segs"></div><div class="lifelabel"><span id="lifeText"></span></div></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="glow" aria-hidden="true"></div>
@@ -450,7 +455,8 @@ dialog::backdrop{background:rgba(20,12,16,.72)}
 */
 const BIRTHDAY = new Date(2026, 10, 17, 0, 0, 0);   // 17 Nov 2026, local midnight
 const EGG_ANSWER = null;                            // set before launch; null accepts any answer
-const COLD_OPEN_IMG = "media/cold-open.jpg";         // full-screen baby photo shown when the book opens
+const COLD_OPEN_IMG = "media/cold-open.jpg";        // scene 1: her now
+const COLD_OPEN_IMG_2 = "media/cold-open-2.jpg";    // scene 2: little Shreya, then the book starts
 const COLD_OPEN_TEXT = "17 November 2005";                            // e.g. "juhu beach"; null accepts any answer (mock)
 
 const chapters = [
@@ -773,14 +779,14 @@ function tick(){
 }
 tick(); setInterval(tick, 1000);
 
-const cold = document.getElementById("cold"), coldImg = document.getElementById("coldImg");
+const cold = document.getElementById("cold"), sceneA = document.getElementById("sceneA"), sceneB = document.getElementById("sceneB");
 document.getElementById("coldText").textContent = COLD_OPEN_TEXT;
-const coldBg = document.getElementById("coldBg");
-coldImg.onerror = () => { coldImg.remove(); coldBg.remove(); };
-coldImg.src = COLD_OPEN_IMG; coldBg.src = COLD_OPEN_IMG;
-let coldTimer = null;
+[[sceneA, COLD_OPEN_IMG], [sceneB, COLD_OPEN_IMG_2]].forEach(([sc, src]) => sc.querySelectorAll("img").forEach(im => { im.onerror = () => im.remove(); im.src = src; }));
+let coldTimer = null, coldStage = 0;
 function endCold(){ clearTimeout(coldTimer); cold.classList.remove("show"); }
-cold.addEventListener("click", endCold);
+function toSceneB(){ clearTimeout(coldTimer); coldStage = 2; sceneA.classList.remove("on"); sceneB.classList.add("on"); coldTimer = setTimeout(endCold, 4600); }
+function startCold(){ coldStage = 1; sceneA.classList.add("on"); sceneB.classList.remove("on"); coldTimer = setTimeout(toSceneB, 3600); }
+cold.addEventListener("click", () => coldStage === 1 ? toSceneB() : endCold());
 
 /* mystical opening: soft celesta waltz, distant choir, long echoes (original melody, generated live) */
 const MAGIC_VOL = .38;   // overall loudness of the opening sound
@@ -865,7 +871,7 @@ function openBook(){
     document.getElementById("contents").scrollIntoView({behavior:"auto"});
     setMusic("box");
     cold.style.transition = "none"; cold.classList.add("show"); void cold.offsetWidth; cold.style.transition = "";
-    coldTimer = setTimeout(endCold, 4200);
+    startCold();
     flash.classList.add("out"); flash.classList.remove("on");
   }, T.done);
 }
