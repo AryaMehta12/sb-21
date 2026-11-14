@@ -308,6 +308,9 @@ div.media{cursor:default}
 dialog{border:0;border-radius:10px;padding:0;width:min(560px,92vw);background:var(--paper);color:var(--print-ink)}
 dialog::backdrop{background:rgba(20,12,16,.72)}
 .dlg-media iframe,.dlg-media video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.media .rotbg{position:absolute;left:50%;top:50%;width:125%;height:80%;background-size:237% auto;background-position:center;pointer-events:none}
+#vid.rotated .dlg-media{aspect-ratio:16/9;overflow:hidden}
+#vid.rotated .dlg-media iframe{left:50%;top:50%;width:56.25%;height:177.78%;transform:translate(-50%,-50%) rotate(var(--rot,90deg))}
 #vid.vertical{width:min(380px,90vw)}
 #vid.vertical .dlg-media{aspect-ratio:9/16;max-height:82vh}
 .dlg-media{position:relative;aspect-ratio:16/10;display:grid;place-items:center;color:#fff;text-align:center;padding:20px;background:linear-gradient(150deg,var(--g1,#6d4a5c),var(--g2,#c78b6e))}
@@ -540,7 +543,7 @@ const chapters = [
       {name:"Visharad", kind:"video", yt:"7K__rUXgeHc", vertical:true, g:["#7B5A92","#F0B98C"]},
       {name:"Darsh", kind:"video", yt:"CuG5Gx1ryA4", vertical:true, g:["#6E4E86","#E9A47C"]},
       {name:"Radhika", kind:"video", yt:"btF-pFK8HAQ", g:["#7B5A92","#F0B98C"]},
-      {name:"Maitreyee", kind:"video", yt:"RTCD1zoznhg", vertical:true, g:["#6E4E86","#E9A47C"]},
+      {name:"Maitreyee", kind:"video", yt:"RTCD1zoznhg", rot:90, g:["#6E4E86","#E9A47C"]},
       {name:"Gargi", kind:"video", yt:"PB3Kvd-jJlo", g:["#7B5A92","#F0B98C"]},
       {name:"Shreya\u2019s Boyfriend", kind:"video", yt:"3cns99cyGzE", g:["#6E4E86","#E9A47C"]}
     ]}
@@ -594,13 +597,14 @@ const bgStyle = (g, img, size) => `--g1:${g[0]};--g2:${g[1]}` + (img ? `;backgro
 // YouTube thumbnail as the card preview when no cover photo is given (Shorts are zoomed so the black side bars are cropped off)
 const thumbOf = c => c.img || (c.yt ? `https://i.ytimg.com/vi/${c.yt}/hqdefault.jpg` : "");
 const thumbSize = c => (!c.img && c.yt && c.vertical) ? "237% auto" : "cover";
+const rotThumb = c => (c.rot && c.yt && !c.img) ? `<span class="rotbg" style="background-image:url('https://i.ytimg.com/vi/${c.yt}/hqdefault.jpg');transform:translate(-50%,-50%) rotate(${c.rot}deg)"></span>` : "";
 function card(c){
   const id = "o" + (uid++); const idx = allCards.push(c) - 1;
-  const inner = `<span class="tag">${c.kind==="video" ? "Video" + (c.dur ? ", "+c.dur : "") : "Photo"}</span>${thumbOf(c) ? "" : `<span class="ini">${initials(c.name)}</span>`}
+  const inner = `${rotThumb(c)}<span class="tag">${c.kind==="video" ? "Video" + (c.dur ? ", "+c.dur : "") : "Photo"}</span>${thumbOf(c) ? "" : `<span class="ini">${initials(c.name)}</span>`}
     ${c.kind==="video" ? '<span class="play" aria-hidden="true"></span>' : ""}${c.develop ? '<span class="dev" aria-hidden="true"></span>' : ""}`;
   const media = c.kind==="video"
-    ? `<button class="media ${c.develop?"develop":""}" style="${bgStyle(c.g,thumbOf(c),thumbSize(c))}" data-vid="${idx}" aria-label="Play ${c.name}'s video">${inner}</button>`
-    : `<div class="media ${c.develop?"develop":""}" style="${bgStyle(c.g,thumbOf(c),thumbSize(c))}" role="img" aria-label="Photo from ${c.name}">${inner}</div>`;
+    ? `<button class="media ${c.develop?"develop":""}" style="${bgStyle(c.g,c.rot&&!c.img?"":thumbOf(c),thumbSize(c))}" data-vid="${idx}" aria-label="Play ${c.name}'s video">${inner}</button>`
+    : `<div class="media ${c.develop?"develop":""}" style="${bgStyle(c.g,c.rot&&!c.img?"":thumbOf(c),thumbSize(c))}" role="img" aria-label="Photo from ${c.name}">${inner}</div>`;
   return `<article class="card-wrap">
     <div class="print">${media}<div class="lip">${c.name}</div></div>
     <div class="meta">${c.rel ? `<div class="rel">${c.rel}</div>` : ""}${c.cap ? `<p class="cap">${c.cap}</p>` : ""}${c.good ? `<p class="good">${c.good}</p>` : ""}
@@ -749,6 +753,7 @@ document.addEventListener("click", e => {
   else if (c.video) fr.innerHTML = `<video src="${c.video}" controls autoplay playsinline></video>`;
   else fr.innerHTML = `<p>${c.name}'s video plays here.</p>`;
   vid.classList.toggle("vertical", !!c.vertical);
+  vid.classList.toggle("rotated", !!c.rot); vid.style.setProperty("--rot", (c.rot||90)+"deg");
   ducked = true; applyVolume(); vid.showModal();
 });
 vid.addEventListener("close", () => { fr.innerHTML = ""; ducked = false; applyVolume(); });
